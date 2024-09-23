@@ -10,8 +10,10 @@ resource "aws_dynamodb_table" "tf_lock" {
     name = "LockID"
     type = "S"
   }
+
+  hash_key = "LockID"  # This should be included within the resource block
 }
-hash_key = "LockID"
+
 
 terraform {
   backend "s3" {
