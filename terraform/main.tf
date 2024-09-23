@@ -2,19 +2,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_dynamodb_table" "tf_lock" {
-  name         = "terraform-state-lock-likky"         
-  billing_mode = "PAY_PER_REQUEST"
-  
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
-
-  hash_key = "LockID"  # This should be included within the resource block
-}
-
-
 terraform {
   backend "s3" {
     bucket         = "terraform-statefile-bucket-likky"
