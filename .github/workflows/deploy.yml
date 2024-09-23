@@ -37,11 +37,11 @@ jobs:
 
       - name: Get EC2 Public DNS
         id: ec2_output_dns
-        run: echo "PUBLIC_DNS=$(terraform output -raw instance_public_dns)" >> $GITHUB_ENV
+        run: printf "PUBLIC_DNS=$(terraform output -raw instance_public_dns)" >> $GITHUB_ENV
 
       - name: Get EC2 Private Key
         id: ec2_output_key
-        run: echo "PRIVATE_KEY=$(terraform output -raw ec2_private_key)" >> $GITHUB_ENV
+        run: printf "PRIVATE_KEY=$(terraform output -raw ec2_private_key)" >> $GITHUB_ENV
 
   build_and_deploy:
     name: Build and Deploy Docker Image
