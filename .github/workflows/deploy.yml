@@ -38,15 +38,15 @@ jobs:
       - name: Get EC2 Public DNS
         id: ec2_output_dns
         run: |
-          PUBLIC_DNS=$(terraform output -raw instance_public_dns | sed 's/[^[:print:]]//g')
-          echo "Public DNS: $PUBLIC_DNS"  # Debugging line
+          PUBLIC_DNS=$(terraform output -raw instance_public_dns | tr -d '"')
           echo "PUBLIC_DNS=$PUBLIC_DNS" >> $GITHUB_ENV
 
       - name: Get EC2 Private Key
         id: ec2_output_key
         run: |
-          PRIVATE_KEY=$(terraform output -raw ec2_private_key | sed 's/[^[:print:]]//g')
+          PRIVATE_KEY=$(terraform output -raw ec2_private_key | tr -d '"')
           echo "PRIVATE_KEY=$PRIVATE_KEY" >> $GITHUB_ENV
+
 
 
   build_and_deploy:
