@@ -77,22 +77,13 @@ jobs:
           echo "PRIVATE_KEY: ${{ env.PRIVATE_KEY }}"
 
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.10  # Use the latest version
+        uses: appleboy/ssh-action@master
         with:
-          host: ${{ env.PUBLIC_DNS }}
+          host: ${{ env.PUBLIC_DNS }}  # Ensure this points to your existing EC2 instance
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ env.PRIVATE_KEY }}
-          port: 22
           script: |
             docker stop webapp || true
             docker rm webapp || true
-            if ! command -v docker &> /dev/null
-            then
-                sudo yum install docker -y
-                sudo service docker start
-            fi
-            sudo docker run -d -p 80:80 likhithatangudu/webapp:${{ github.sha }}
-          sync: false
-          use_insecure_cipher: false
-          timeout: 30s
-          command_timeout: 10m 
+            docker pull ${{ secrets.DOCKER_USERNAME }}/webapp:${{ github.sha }}
+            docker run -d --name webapp -p 80:80 ${{ secrets.DOCKER_USERNAME }}/webapp:${{ github.sha }}
