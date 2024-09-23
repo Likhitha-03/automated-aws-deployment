@@ -17,7 +17,7 @@ terraform {
     bucket         = "terraform-statefile-bucket-likky"
     key            = "terraform/state"
     region         = "us-east-1"
-    dynamodb_table = aws_dynamodb_table.tf_lock.name  # Reference the created table
+    dynamodb_table = "terraform-state-lock-likky"
     encrypt        = true
   }
 }
