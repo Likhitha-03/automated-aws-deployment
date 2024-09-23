@@ -77,11 +77,12 @@ jobs:
           echo "PRIVATE_KEY: ${{ env.PRIVATE_KEY }}"
 
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.0  # Use a specific version instead of master
+        uses: appleboy/ssh-action@v0.1.0  # Use a specific version
         with:
           host: ${{ env.PUBLIC_DNS }}  # Use the public DNS from the output
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ env.PRIVATE_KEY }}  # Use the private key from the output
+          port: 22
           script: |
             if ! command -v docker &> /dev/null
             then
@@ -89,3 +90,12 @@ jobs:
                 sudo service docker start
             fi
             sudo docker run -d -p 80:80 likhithatangudu/webapp:${{ github.sha }}
+          sync: false
+          use_insecure_cipher: false
+          timeout: 30s
+          command_timeout: 10m
+          proxy_port: 22
+          proxy_timeout: 30s
+          proxy_use_insecure_cipher: false
+          script_stop: false
+          debug: false
