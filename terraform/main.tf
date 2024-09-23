@@ -11,6 +11,7 @@ resource "aws_dynamodb_table" "tf_lock" {
     type = "S"
   }
 }
+hash_key = "LockID"
 
 terraform {
   backend "s3" {
