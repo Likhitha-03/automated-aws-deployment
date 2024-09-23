@@ -49,9 +49,6 @@ jobs:
           terraform output -raw ec2_private_key | tr -d '"' >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-
-
-
   build_and_deploy:
     name: Build and Deploy Docker Image
     runs-on: ubuntu-latest
@@ -74,8 +71,13 @@ jobs:
           push: true
           tags: likhithatangudu/webapp:${{ github.sha }}
 
+      - name: Debug Environment Variables
+        run: |
+          echo "PUBLIC_DNS: ${{ env.PUBLIC_DNS }}"
+          echo "PRIVATE_KEY: ${{ env.PRIVATE_KEY }}"
+
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v0.1.0  # Use a specific version instead of master
         with:
           host: ${{ env.PUBLIC_DNS }}  # Use the public DNS from the output
           username: ${{ secrets.EC2_USERNAME }}
@@ -86,4 +88,4 @@ jobs:
                 sudo yum install docker -y
                 sudo service docker start
             fi
-            sudo docker run -d -p 80:80 likhithatangudu/webappgithub:${{ github.sha }}
+            sudo docker run -d -p 80:80 likhithatangudu/webapp:${{ github.sha }}
