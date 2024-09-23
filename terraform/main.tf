@@ -2,33 +2,22 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_s3_bucket" "tf_state" {
-  bucket = "my-terraform-state-bucket-likky"  
-  acl    = "private"
-  tags = {
-    Name = "Terraform State Bucket"
-  }
-}
-
 resource "aws_dynamodb_table" "tf_lock" {
-  name         = "terraform-lock-table"
+  name         = "terraform-state-lock-likky"         
   billing_mode = "PAY_PER_REQUEST"
+  
   attribute {
     name = "LockID"
     type = "S"
   }
-  tags = {
-    Name = "Terraform Lock Table"
-  }
 }
 
-# Terraform backend configuration
 terraform {
   backend "s3" {
-    bucket         = aws_s3_bucket.tf_state.bucket
+    bucket         = "terraform-statefile-bucket-likky"
     key            = "terraform/state"
     region         = "us-east-1"
-    dynamodb_table = aws_dynamodb_table.tf_lock.name
+    dynamodb_table = aws_dynamodb_table.tf_lock.name  # Reference the created table
     encrypt        = true
   }
 }
