@@ -64,6 +64,11 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}  
           script: |
+            # Ensure Docker is installed and running
+            sudo yum install -y docker || sudo apt-get install -y docker.io
+            sudo service docker start || sudo systemctl start docker
+            
+            # Docker commands to deploy the app
             docker stop webapp || true
             docker rm webapp || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/webapp:${{ github.sha }}
