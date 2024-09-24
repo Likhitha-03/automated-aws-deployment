@@ -3,7 +3,4 @@ output "instance_public_dns" {
   value       = aws_instance.new_instance.public_dns
 }
 
-output "ec2_private_key" {
-  value     = tls_private_key.pk.private_key_pem
-  sensitive = true  
-}
+
