@@ -80,8 +80,8 @@ resource "aws_security_group" "new_sg" {
 }
 
 resource "aws_instance" "new_instance" {
-  ami                    = "ami-0ebfd941bbafe70c6"  
-  instance_type          = "t2.micro"
+  ami                    = var.ami  
+  instance_type          = var.instance_type 
   subnet_id              = aws_subnet.new_subnet.id  
   vpc_security_group_ids = [aws_security_group.new_sg.id]
   availability_zone      = "us-east-1a"
