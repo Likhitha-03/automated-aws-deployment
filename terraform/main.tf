@@ -60,13 +60,13 @@ resource "aws_security_group" "new_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"]  
   }
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"]  
   }
   egress {
     from_port   = 0
@@ -79,32 +79,15 @@ resource "aws_security_group" "new_sg" {
   }
 }
 
-
 resource "aws_instance" "new_instance" {
   ami                    = "ami-0ebfd941bbafe70c6"  
   instance_type          = "t2.micro"
-  subnet_id              = aws_subnet.new_subnet.id
+  subnet_id              = aws_subnet.new_subnet.id  
   vpc_security_group_ids = [aws_security_group.new_sg.id]
   availability_zone      = "us-east-1a"
-  key_name               = aws_key_pair.kp.key_name
+  key_name               = "automated-aws-deployment-key"
 
   tags = {
-    Name = "MyEC2Instance"
+    Name = "MyNewEC2Instance"
   }
-}
-
-
-resource "tls_private_key" "pk" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
-resource "aws_key_pair" "kp" {
-  key_name   = "myKey"
-  public_key = tls_private_key.pk.public_key_openssh
-}
-
-resource "local_file" "ssh_key" {
-  filename = "${aws_key_pair.kp.key_name}.pem"
-  content  = tls_private_key.pk.private_key_pem
 }
