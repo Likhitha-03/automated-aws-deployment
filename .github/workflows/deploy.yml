@@ -18,6 +18,7 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.0.0
+          terraform_wrapper: false  # Add this line to disable the wrapper
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -35,15 +36,10 @@ jobs:
         run: terraform apply -auto-approve
         working-directory: terraform/
 
-      - name: Debug Public DNS
-        run: echo "Public DNS:${{ steps.ec2_dns.outputs.public_dns }}"
-        
       - name: Get EC2 Username
         id: ec2_username
         run: echo "username=$(terraform output -raw ec2_username | tr -d '\n')" >> $GITHUB_ENV
         working-directory: terraform/
-
-
 
   build_and_deploy:
     name: Build and Deploy Docker Image
