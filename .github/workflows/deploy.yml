@@ -40,7 +40,9 @@ jobs:
         run: echo "::set-output name=public_dns::$(terraform output -raw ec2_public_dns)"
         working-directory: terraform/
 
-
+      - name: Debug Public DNS
+        run: echo "Public DNS:${{ steps.ec2_dns.outputs.public_dns }}"
+        
       - name: Get EC2 Username
         id: ec2_username
         run: echo "::set-output name=username::$(terraform output -raw ec2_username)"
