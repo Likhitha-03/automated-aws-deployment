@@ -18,7 +18,6 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.0.0
-          terraform_wrapper: false  # Add this line to disable the wrapper
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -34,11 +33,6 @@ jobs:
       - name: Terraform Apply
         id: terraform_apply
         run: terraform apply -auto-approve
-        working-directory: terraform/
-
-      - name: Get EC2 Username
-        id: ec2_username
-        run: echo "username=$(terraform output -raw ec2_username | tr -d '\n')" >> $GITHUB_ENV
         working-directory: terraform/
 
   build_and_deploy:
@@ -66,12 +60,15 @@ jobs:
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}  # Using Terraform output
-          username: ${{ env.username }}
+          host: ${{ secrets.EC2_HOST }}  
+          username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}  
           script: |
+            # Ensure Docker is installed and running
             sudo yum install -y docker || sudo apt-get install -y docker.io
             sudo service docker start || sudo systemctl start docker
+            
+            # Docker commands to deploy the app
             docker stop webapp || true
             docker rm webapp || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/webapp:${{ github.sha }}
