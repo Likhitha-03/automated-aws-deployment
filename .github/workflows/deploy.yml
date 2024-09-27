@@ -35,10 +35,11 @@ jobs:
         run: terraform apply -auto-approve
         working-directory: terraform/
 
-      - name: Get EC2 Public IP
-        id: ec2_ip
-        run: echo "::set-output name=public_ip::$(terraform output -raw ec2_public_ip)"
+      - name: Get EC2 Public DNS
+        id: ec2_dns
+        run: echo "::set-output name=public_dns::$(terraform output -raw ec2_public_dns)"
         working-directory: terraform/
+
 
       - name: Get EC2 Username
         id: ec2_username
