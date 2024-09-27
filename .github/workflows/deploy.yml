@@ -35,6 +35,16 @@ jobs:
         run: terraform apply -auto-approve
         working-directory: terraform/
 
+      - name: Get EC2 Public IP
+        id: ec2_ip
+        run: echo "::set-output name=public_ip::$(terraform output -raw ec2_public_ip)"
+        working-directory: terraform/
+
+      - name: Get EC2 Username
+        id: ec2_username
+        run: echo "::set-output name=username::$(terraform output -raw ec2_username)"
+        working-directory: terraform/
+
   build_and_deploy:
     name: Build and Deploy Docker Image
     runs-on: ubuntu-latest
@@ -60,15 +70,12 @@ jobs:
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}  
-          username: ${{ secrets.EC2_USERNAME }}
+          host: ${{ steps.ec2_ip.outputs.public_ip }}  # Using Terraform output
+          username: ${{ steps.ec2_username.outputs.username }}  # Using Terraform output
           key: ${{ secrets.EC2_PRIVATE_KEY }}  
           script: |
-            # Ensure Docker is installed and running
             sudo yum install -y docker || sudo apt-get install -y docker.io
             sudo service docker start || sudo systemctl start docker
-            
-            # Docker commands to deploy the app
             docker stop webapp || true
             docker rm webapp || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/webapp:${{ github.sha }}
